@@ -4,8 +4,7 @@
  * UPD: 2021-04-09 19:21:40
  * 
  * 引入了 template.cc 中的一些宏定义
- */
-#include <bits/stdc++.h>
+ */#include <bits/stdc++.h>
 
 #define minimize(a, b...) ((a) = min({(a), b}))
 #define maximize(a, b...) ((a) = max({(a), b}))
@@ -13,6 +12,7 @@
 #define watch(...) trace(#__VA_ARGS__, __VA_ARGS__)
 #define eprintf(x...) fprintf(stderr, x)
 #define var(x) ""#x" = " << x
+#define $$(...) $.trace(#__VA_ARGS__, __VA_ARGS__)
 
 static class cquery {
 
@@ -33,7 +33,7 @@ static class cquery {
     }
 
     template<class T>
-    static void write(FILE *io, const T &x) {
+    static void write(FILE *io, T x) {
         if (x < 0) {
             fputc('-', io);
             x = -x;
@@ -47,9 +47,6 @@ static class cquery {
         str[cnt++] = x + 48;
         while (cnt--) fputc(str[cnt], io);
     }
-
-    template<class T>
-    static void write(FILE *io, const T &&x) { write(io, x); }
 
     static void write(FILE *io, const double x) {
         sprintf(buffer, "%lf", x), write(io, buffer);
@@ -89,7 +86,7 @@ static class cquery {
         write(io, x), write(io, xs...);
     }
 
-    static char* readToken() {
+    static char *readToken() {
         char *cur = buffer;
         int ch = ::getchar();
         while (is<_blank>(ch)) ch = ::getchar();
@@ -143,10 +140,10 @@ public:
         return *this;
     }
 
-    template <class T>
-    cquery &operator, (T &x) { return (*this)(x); }
+    template<class T>
+    cquery &operator,(T &x) { return (*this)(x); }
 
-    template <class T>
+    template<class T>
     T next() {
         T ret;
         (*this)(ret);
@@ -276,13 +273,11 @@ public:
         return *this;
     }
 
-    template <class T>
-    void trace(const char *name, T &&value)
-    {write(stderr, name, " = ", value);}
+    template<class T>
+    void trace(const char *name, T &&value) { write(stderr, name, " = ", value); }
 
-    template <class T, class ...Ts>
-    void trace(const char *names, T &&value, Ts &&...list)
-    {
+    template<class T, class ...Ts>
+    void trace(const char *names, T &&value, Ts &&...list) {
         const char *separate = strchr(names + 1, ',');
         while (names != separate) fputc(*names++, stderr);
         write(stderr, " = ", value), fputc(',', stderr);
@@ -305,6 +300,6 @@ signed main() {
     ios::sync_with_stdio(false);
     cin.tie(null), cout.tie(null);
 
-
+    
     return 0;
 }
