@@ -4,7 +4,8 @@
  * UPD: 2021-04-09 19:21:40
  * 
  * 引入了 template.cc 中的一些宏定义
- */#include <bits/stdc++.h>
+ */
+#include <bits/stdc++.h>
 
 #define minimize(a, b...) ((a) = min({(a), b}))
 #define maximize(a, b...) ((a) = max({(a), b}))
@@ -112,6 +113,11 @@ public:
         return (*this)(x), (*this)(y...);
     }
 
+    template<class... Ts>
+    cquery &operator()(char *x, Ts &&... y) {
+        return (*this)(x), (*this)(y...);
+    }
+
     cquery &operator()(char *x) {
         scanf("%s", x);
         return *this;
@@ -139,9 +145,6 @@ public:
         do x = (char) ::getchar(); while (is<_blank>(x));
         return *this;
     }
-
-    template<class T>
-    cquery &operator,(T &x) { return (*this)(x); }
 
     template<class T>
     T next() {
@@ -288,6 +291,12 @@ public:
 
 char cquery::buffer[cquery::buffer_size];
 
+struct {
+    template <class token>
+    auto &operator,(token &x) { return $(x), *this; }
+    auto &operator,(char *x) { return $(x), *this; }
+} input;
+
 using namespace std;
 
 using longs = long long;
@@ -300,6 +309,6 @@ signed main() {
     ios::sync_with_stdio(false);
     cin.tie(null), cout.tie(null);
 
-    
+
     return 0;
 }
