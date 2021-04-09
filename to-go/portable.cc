@@ -2,12 +2,17 @@
  *
  * cquery 便携版 快读快写代码模板
  * UPD: 2021-04-09 19:21:40
+ * 
+ * 引入了 template.cc 中的一些宏定义
  */
 #include <bits/stdc++.h>
 
 #define minimize(a, b...) ((a) = min({(a), b}))
 #define maximize(a, b...) ((a) = max({(a), b}))
 #define sgn(x) ((x) < 0 ? -1 : (x) > 0)
+#define watch(...) trace(#__VA_ARGS__, __VA_ARGS__)
+#define eprintf(x...) fprintf(stderr, x)
+#define var(x) ""#x" = " << x
 
 static class cquery {
 
@@ -139,6 +144,9 @@ public:
     }
 
     template <class T>
+    cquery &operator, (T &x) { return (*this)(x); }
+
+    template <class T>
     T next() {
         T ret;
         (*this)(ret);
@@ -235,6 +243,52 @@ public:
         }
         return *this;
     }
+
+    template<class T>
+    cquery &log(const T &x) {
+        return write(stdout, x, '\n'), *this;
+    }
+
+    template<class T>
+    cquery &log(const T &&x) {
+        return write(stderr, x, '\n'), *this;
+    }
+
+    template<class T, class ...Ts>
+    cquery &log(const T &x, Ts ...xs) {
+        write(stderr, x, ' '), put(xs...);
+        return *this;
+    }
+
+    template<class T, class ...Ts>
+    cquery &log(const T &&x, Ts ...xs) {
+        write(stderr, x, ' '), put(xs...);
+        return *this;
+    }
+
+    template<class T, class comma = char>
+    cquery &logArray(T first, T last, comma split = ' ') {
+        while (first != last) {
+            write(stderr, *first), ++first;
+            if (first != last) write(stderr, split);
+            else write(stderr, '\n');
+        }
+        return *this;
+    }
+
+    template <class T>
+    void trace(const char *name, T &&value)
+    {write(stderr, name, " = ", value);}
+
+    template <class T, class ...Ts>
+    void trace(const char *names, T &&value, Ts &&...list)
+    {
+        const char *separate = strchr(names + 1, ',');
+        while (names != separate) fputc(*names++, stderr);
+        write(stderr, " = ", value), fputc(',', stderr);
+        trace(separate + 1, list...);
+    }
+
 } $;
 
 char cquery::buffer[cquery::buffer_size];
