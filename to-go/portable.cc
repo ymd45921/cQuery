@@ -5,10 +5,6 @@
  * 
  * 引入了 template.cc 中的一些宏定义
  */
-/**
- *
- *
- */
 #include <bits/stdc++.h>
 
 #define minimize(a, b...) ((a) = min({(a), b}))
@@ -54,11 +50,11 @@ static class cquery {
     }
 
     static void write(FILE *io, const double x) {
-        sprintf(buffer, "%lf", x), write(io, buffer);
+        sprintf(buffer, "%.10lf", x), write(io, buffer);
     }
 
     static void write(FILE *io, const long double x) {
-        sprintf(buffer, "%Lf", x), write(io, buffer);
+        sprintf(buffer, "%.10Lf", x), write(io, buffer);
     }
 
     static void write(FILE *io, const float x) {
@@ -72,6 +68,8 @@ static class cquery {
     static void write(FILE *io, const std::string &x) { write(io, x.c_str()); }
 
     static void write(FILE *io, const char x) { fputc(x, io); }
+
+    static void write(FILE *io, const bool x) { fputs(x ? "true" : "false", io); }
 
     template<const char *charset>
     static inline bool is(int x) {
@@ -100,6 +98,15 @@ static class cquery {
         return *cur = '\0', cur;
     }
 
+    static void readLine(char *buf) {
+#ifdef SCANF_ONLY
+        scanf("%[^\n]", &str);
+        ::getchar();
+#else
+        gets(buf);
+#endif
+    }
+
     static void flush(FILE *stream) { fflush(stream); }
 
     static int eof(FILE *stream) { return feof(stream); }
@@ -118,7 +125,7 @@ public:
     }
 
     template<class... Ts>
-    cquery &operator()(char *x, Ts &&... y) {
+    cquery &operator()(char *x, Ts &... y) {
         return (*this)(x), (*this)(y...);
     }
 
@@ -144,8 +151,8 @@ public:
         x = strtof(buffer, &end);
         return *this;
     }
-    
-    template <class T1, class T2>
+
+    template<class T1, class T2>
     cquery &operator()(std::pair<T1, T2> &x) {
         return (*this)(x.first, x.second);
     }
@@ -155,12 +162,16 @@ public:
         return *this;
     }
 
+private:
+
     template<class T>
     T next() {
         T ret;
         (*this)(ret);
         return ret;
     }
+
+public:
 
     int nextInt() { return read<int>(); }
 
@@ -242,8 +253,8 @@ public:
             (*this)(*first), ++first;
         return *this;
     }
-    
-    template<class T, class Fun = void(*)(T, cquery &)>
+
+    template<class T, class Fun = void (*)(T, cquery &)>
     cquery &nextArray(T first, T last, Fun lambda) {
         while (first != last)
             lambda(first, *this), ++first;
@@ -260,6 +271,14 @@ public:
         return *this;
     }
 
+    cquery &nextLine(char *str) {
+        int ch = ::getchar();
+        while (is<_blank>(ch)) ch = ::getchar();
+        str[0] = ch;
+        readLine(str + 1);
+        return *this;
+    }
+
     template<class T>
     cquery &putArray(T first, T last, char *split) {
         while (first != last) {
@@ -270,7 +289,7 @@ public:
         return *this;
     }
 
-    template<class T, class Fun = void(*)(T, cquery &), class comma = char>
+    template<class T, class Fun = void (*)(T, cquery &), class comma = char>
     cquery &putArray(T first, T last, Fun fmt, comma split = ' ') {
         while (first != last) {
             fmt(first, *this), ++first;
@@ -282,7 +301,7 @@ public:
 
     template<class T>
     cquery &log(const T &x) {
-        return write(stdout, x, '\n'), *this;
+        return write(stderr, x, '\n'), *this;
     }
 
     template<class T>
@@ -292,13 +311,13 @@ public:
 
     template<class T, class ...Ts>
     cquery &log(const T &x, Ts ...xs) {
-        write(stderr, x, ' '), put(xs...);
+        write(stderr, x, ' '), log(xs...);
         return *this;
     }
 
     template<class T, class ...Ts>
     cquery &log(const T &&x, Ts ...xs) {
-        write(stderr, x, ' '), put(xs...);
+        write(stderr, x, ' '), log(xs...);
         return *this;
     }
 
@@ -322,7 +341,7 @@ public:
         return *this;
     }
 
-    template<class T, class Fun = void(*)(T, cquery &), class comma = char>
+    template<class T, class Fun = void (*)(T, cquery &), class comma = char>
     cquery &logArray(T first, T last, Fun fmt, comma split = ' ') {
         while (first != last) {
             fmt(first, *this), ++first;
@@ -339,7 +358,7 @@ public:
     [[deprecated]] cquery &put() { return newLine(); }
 
     template<class T>
-    void trace(const char *name, T &&value) { write(stderr, name, " = ", value); }
+    void trace(const char *name, T &&value) { write(stderr, name, " = ", value, '\n'); }
 
     template<class T, class ...Ts>
     void trace(const char *names, T &&value, Ts &&...list) {
@@ -348,41 +367,26 @@ public:
         write(stderr, " = ", value), fputc(',', stderr);
         trace(separate + 1, list...);
     }
-
-    using action = cquery &(*)(cquery &);
-
-    using operation = cquery &(*)(FILE *, cquery &);
-
-    cquery &exec(const action fun) { return fun(*this); }
-
-    cquery &exec(const operation fun, FILE *pf) { return fun(pf, *this); }
-    
-    cquery &operator()(const action x) { return exec(x); }
-
-    cquery &operator()(const operation x) { return exec(x, stdout); }
-
-private:
-    
-    void write(FILE *io, const action act) { exec(act); }
-
-    void write(FILE *io, const operation act) { exec(act, io); }
 } $;
 
 char cquery::buffer[cquery::buffer_size];
 
 struct {
-    template <class token>
+    template<class token>
     auto &operator,(token &x) { return $(x), *this; }
+
     auto &operator,(char *x) { return $(x), *this; }
 } input;
 
-// TODO: add function override for flush and nextline.
 struct {
     using linebreak = std::ostream &(*)(std::ostream &);
+
     auto &operator,(linebreak x) { return $.newLine().flush(), *this; }
-    template <class token>
+
+    template<class token>
     auto &operator,(token &x) { return $.print(x), *this; }
-    template <class token>
+
+    template<class token>
     auto &operator,(token &&x) { return $.print(x), *this; }
 } output;
 
@@ -397,7 +401,6 @@ const auto null = nullptr;
 signed main() {
     ios::sync_with_stdio(false);
     cin.tie(null), cout.tie(null);
-
 
     return 0;
 }
