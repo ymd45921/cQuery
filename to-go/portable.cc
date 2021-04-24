@@ -367,6 +367,24 @@ public:
         write(stderr, " = ", value), fputc(',', stderr);
         trace(separate + 1, list...);
     }
+    
+    using action = cquery &(*)(cquery &);
+
+    using operation = cquery &(*)(FILE *, cquery &);
+
+    cquery &exec(const action fun) { return fun(*this); }
+
+    cquery &exec(const operation fun, FILE *pf) { return fun(pf, *this); }
+
+    cquery &operator()(const action x) { return exec(x); }
+
+    cquery &operator()(const operation x) { return exec(x, stdout); }
+
+private:
+
+    void write(FILE *io, const action act) { exec(act); }
+
+    void write(FILE *io, const operation act) { exec(act, io); }
 } $;
 
 char cquery::buffer[cquery::buffer_size];
